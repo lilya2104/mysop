@@ -30,11 +30,9 @@ public record PatchGreenhouseRequest(
         Integer quantityPlant,
 
         @Schema(description = "Статус состояния почвы", example = "WET", requiredMode = Schema.RequiredMode.REQUIRED)
-        @NotNull(message = "Статус состояния почвы не может быть пустым")
         WateredStatus status,
 
         @Schema(description = "Момент последнего полива теплицы", example = "2000-01-01T13:01:00", requiredMode = Schema.RequiredMode.REQUIRED)
-        @NotNull(message = "Время последнего полива теплицы не может быть пустым")
         LocalDate lastWateredAt
 
 ) {}

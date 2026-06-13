@@ -19,6 +19,11 @@
 
         # Запустить gRPC Enrichment Client (RabbitMQ → gRPC → RabbitMQ, HTTP: 8082)
         .\mvnw spring-boot:run -pl grpc-enrichment-client -am
+
+        # Запустить сервис уведомлений
+        .\mvnw spring-boot:run -pl notification-service -DskipTests
+
+        Далее в браузере http://localhost:8084/
     -->
 
     <groupId>edu.rutmiit.demo</groupId>
@@ -38,6 +43,7 @@
         <module>audit-service</module>
         <module>grpc-analytics-server</module>
         <module>grpc-enrichment-client</module>
+        <module>notification-service</module>
     </modules>
 
 </project>
