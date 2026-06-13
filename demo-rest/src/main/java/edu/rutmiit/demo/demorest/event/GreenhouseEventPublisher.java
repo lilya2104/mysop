@@ -40,14 +40,15 @@ public class GreenhouseEventPublisher {
     /**
      * Публикует событие «теплица создана».
      */
-    public void publishCreated(GreenhouseResponse greenhouse) {
+    public void publishCreated(GreenhouseResponse greenhouse, Integer totalWaterings) {
         var event = new GreenhouseEvent.Created(
                 greenhouse.getId(),
                 greenhouse.getNamePlant(),
                 greenhouse.getVarietyPlant(),
                 greenhouse.getQuantityPlant(),
                 greenhouse.getStatus(),
-                greenhouse.getLastWateredAt()
+                greenhouse.getLastWateredAt(),
+                totalWaterings
         );
         send(RoutingKeys.GREENHOUSE_CREATED, event);
     }
@@ -70,12 +71,13 @@ public class GreenhouseEventPublisher {
     /**
      * Публикует событие «теплица полита».
      */
-    public void publishWatered(GreenhouseResponse greenhouse) {
+    public void publishWatered(GreenhouseResponse greenhouse, Integer totalWaterings) {
         var event = new GreenhouseEvent.Watered(
                 greenhouse.getId(),
                 greenhouse.getNamePlant(),
                 greenhouse.getStatus(),
-                LocalDate.now()
+                LocalDate.now(),
+                totalWaterings
         );
         send(RoutingKeys.GREENHOUSE_WATERED, event);
     }

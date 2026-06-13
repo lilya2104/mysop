@@ -27,6 +27,9 @@ public final class RoutingKeys {
     public static final String GREENHOUSE_STATUSCHANGED = "greenhouse.changeWateredStatus";
     public static final String GREENHOUSE_DELETED = "greenhouse.deleted";
 
+    // Routing key для обогащенных событий (результат gRPC-аналитики)
+    public static final String GREENHOUSE_ANALYZED = "greenhouse.analyzed";
+
     // Паттерны для подписки (wildcard)
     public static final String ALL_GREENHOUSE_EVENTS = "greenhouse.*";
     public static final String ALL_EVENTS = "#";

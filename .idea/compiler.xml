@@ -6,9 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="greenhouses-events-contract" />
+        <module name="plants-grpc-contract" />
+        <module name="grpc-enrichment-client" />
+        <module name="grpc-analytics-server" />
         <module name="demo-rest" />
         <module name="audit-service" />
-        <module name="greenhouses-events-contract" />
       </profile>
       <profile name="Annotation profile for demo-rest [root aggregator]" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -30,7 +33,10 @@
       <module name="audit-service" options="-parameters" />
       <module name="books-api-contract" options="-parameters" />
       <module name="demo-rest" options="-parameters" />
+      <module name="grpc-analytics-server" options="-parameters" />
+      <module name="grpc-enrichment-client" options="-parameters" />
       <module name="plants-api-contract" options="-parameters" />
+      <module name="plants-grpc-contract" options="-parameters" />
     </option>
   </component>
 </project>

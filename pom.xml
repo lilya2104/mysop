@@ -6,13 +6,19 @@
 
     <!--
         # Собрать всё в правильном порядке
-        .\mvnw install
+        .\mvnw install -DskipTests
 
-        # Запустить demo-rest - контракт соберётся автоматически
+        # Запустить demo-rest (REST + GraphQL + event publisher)
         .\mvnw spring-boot:run -pl demo-rest -am
 
-        # Собрать только контракт (если менял только его)
-        .\mvnw install -pl books-api-contract
+        # Запустить audit-service (RabbitMQ consumer)
+        .\mvnw spring-boot:run -pl audit-service -am
+
+        # Запустить gRPC Analytics Server (порт gRPC: 9090, HTTP: 8083)
+        .\mvnw spring-boot:run -pl grpc-analytics-server -am
+
+        # Запустить gRPC Enrichment Client (RabbitMQ → gRPC → RabbitMQ, HTTP: 8082)
+        .\mvnw spring-boot:run -pl grpc-enrichment-client -am
     -->
 
     <groupId>edu.rutmiit.demo</groupId>
@@ -25,10 +31,13 @@
         <!-- Контракты (библиотеки без main) — собираются первыми -->
         <module>plants-api-contract</module>
         <module>greenhouses-events-contract</module>
+        <module>plants-grpc-contract</module>
 
         <!-- Сервисы — зависят от контрактов -->
         <module>demo-rest</module>
         <module>audit-service</module>
+        <module>grpc-analytics-server</module>
+        <module>grpc-enrichment-client</module>
     </modules>
 
 </project>

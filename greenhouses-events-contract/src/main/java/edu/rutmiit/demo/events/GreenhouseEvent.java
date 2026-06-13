@@ -21,7 +21,8 @@ public sealed interface GreenhouseEvent {
             String varietyPlant,
             Integer quantityPlant,
             WateredStatus status,
-            LocalDate lastWatered
+            LocalDate lastWatered,
+            Integer totalWaterings
     ) implements GreenhouseEvent {}
 
     /**
@@ -45,7 +46,8 @@ public sealed interface GreenhouseEvent {
             Long greenhouseId,
             String namePlant,
             WateredStatus newStatus,
-            LocalDate wateredAt
+            LocalDate wateredAt,
+            Integer totalWaterings
     ) implements GreenhouseEvent {}
 
     /**
@@ -58,6 +60,21 @@ public sealed interface GreenhouseEvent {
             WateredStatus oldStatus,
             WateredStatus newStatus,
             LocalDate changedAt
+    ) implements GreenhouseEvent {}
+
+    /**
+     * Теплица обогащена аналитикой — результат gRPC-вызова к analytics-серверу.
+     *
+     * Событие публикуется grpc-enrichment-client после получения ответа
+     * от grpc-analytics-server. Содержит вычисленные метрики теплицы.
+     */
+    record Analyzed(
+            Long greenhouseId,
+            String healthStatus,
+            Double healthScore,
+            String wateringUrgency,
+            Integer recommendedWateringDays,
+            String growthStage
     ) implements GreenhouseEvent {}
 
     /**

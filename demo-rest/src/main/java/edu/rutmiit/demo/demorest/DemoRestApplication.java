@@ -15,25 +15,8 @@ import org.springframework.hateoas.config.EnableHypermediaSupport;
 @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 public class DemoRestApplication {
 
-//    public static void main(String[] args) {
-//        SpringApplication.run(DemoRestApplication.class, args);
-//    }
-
-
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
-
     public static void main(String[] args) {
         SpringApplication.run(DemoRestApplication.class, args);
     }
 
-    @PostConstruct
-    public void checkRabbit() {
-        System.out.println("=== RabbitTemplate is: " + rabbitTemplate);
-        if (rabbitTemplate != null) {
-            System.out.println("=== RabbitTemplate is not null! RabbitMQ configured!");
-        } else {
-            System.out.println("=== RabbitTemplate is NULL! RabbitMQ NOT configured!");
-        }
-    }
 }

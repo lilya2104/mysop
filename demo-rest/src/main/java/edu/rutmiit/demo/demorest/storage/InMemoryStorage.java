@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Component
 public class InMemoryStorage {
     public final Map<Long, GreenhouseResponse> greenhouses = new ConcurrentHashMap<>();
+    public final Map<Long, Integer> wateringCounters = new ConcurrentHashMap<>();
     public final AtomicLong greenhouseSequence = new AtomicLong(0);
 
     @PostConstruct
@@ -28,6 +29,7 @@ public class InMemoryStorage {
                 .createdAt(OffsetDateTime.now())
                 .updatedAt(OffsetDateTime.now())
                 .build();
+        wateringCounters.put(ghouse1.getId(), 0);
 
         GreenhouseResponse ghouse2 = GreenhouseResponse.builder()
                 .id(greenhouseSequence.incrementAndGet())
@@ -39,6 +41,7 @@ public class InMemoryStorage {
                 .createdAt(OffsetDateTime.now())
                 .updatedAt(OffsetDateTime.now())
                 .build();
+        wateringCounters.put(ghouse2.getId(), 0);
 
         GreenhouseResponse ghouse3 = GreenhouseResponse.builder()
                 .id(greenhouseSequence.incrementAndGet())
@@ -50,6 +53,7 @@ public class InMemoryStorage {
                 .createdAt(OffsetDateTime.now())
                 .updatedAt(OffsetDateTime.now())
                 .build();
+        wateringCounters.put(ghouse3.getId(), 0);
 
         greenhouses.put(ghouse1.getId(), ghouse1);
         greenhouses.put(ghouse2.getId(), ghouse2);

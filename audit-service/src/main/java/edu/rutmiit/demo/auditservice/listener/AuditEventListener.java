@@ -115,6 +115,16 @@ public class AuditEventListener {
                 yield String.format("Статус состояния почвы теплицы id=%d с растением %s изменён c %s на %s",
                         e.greenhouseId(), e.namePlant(), e.oldStatus(), e.newStatus());
             }
+            case "greenhouse.analyzed" -> {
+                GreenhouseEvent.Analyzed e = jsonMapper.treeToValue(payloadNode, GreenhouseEvent.Analyzed.class);
+                yield String.format("Анализ теплицы id=%d: здоровье=%s, оценка=%.1f, срочность полива=%s, рекомендуемый интервал=%d дн, стадия=%s",
+                        e.greenhouseId(),
+                        e.healthStatus(),
+                        e.healthScore(),
+                        e.wateringUrgency(),
+                        e.recommendedWateringDays(),
+                        e.growthStage());
+            }
             default -> "Неизвестное событие: " + eventType;
         };
     }

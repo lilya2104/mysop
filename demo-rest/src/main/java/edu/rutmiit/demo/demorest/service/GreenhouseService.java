@@ -64,6 +64,7 @@ public class GreenhouseService {
 
     public GreenhouseResponse create(GreenhouseRequest request) {
         long id = storage.greenhouseSequence.incrementAndGet();
+        storage.wateringCounters.put(id, 0);
         GreenhouseResponse ghouse = GreenhouseResponse.builder()
                 .id(id)
                 .namePlant(request.namePlant())
@@ -73,7 +74,7 @@ public class GreenhouseService {
                 .lastWateredAt(request.lastWateredAt())
                 .build();
         storage.greenhouses.put(id, ghouse);
-        eventPublisher.publishCreated(ghouse);
+        eventPublisher.publishCreated(ghouse, 0);
         return ghouse;
     }
 
@@ -108,6 +109,7 @@ public class GreenhouseService {
 
     public GreenhouseResponse watering(Long id) {
         GreenhouseResponse existing = findById(id);
+        int newCount = storage.wateringCounters.merge(id, 1, Integer::sum);
         GreenhouseResponse updated = GreenhouseResponse.builder()
                 .id(id)
                 .namePlant(existing.getNamePlant())
@@ -117,7 +119,7 @@ public class GreenhouseService {
                 .lastWateredAt(LocalDate.now())
                 .build();
         storage.greenhouses.put(id, updated);
-        eventPublisher.publishWatered(updated);
+        eventPublisher.publishWatered(updated, newCount);
         return updated;
     }
 
@@ -141,6 +143,7 @@ public class GreenhouseService {
     public void delete(Long id) {
         GreenhouseResponse existing = findById(id); // Проверяем, что автор существует
         storage.greenhouses.remove(id);
+        storage.wateringCounters.remove(id);
         eventPublisher.publishDeleted(id, existing.getNamePlant());
     }
 }

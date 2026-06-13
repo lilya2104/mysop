@@ -1,0 +1,53 @@
+// Контракт gRPC-сервиса аналитики теплиц
+//
+// Определяет сервис GreenhouseAnalytics с одним RPC-методом AnalyzeGreenhouse.
+// Из этого файла protoc + protoc-gen-grpc-java генерируют:
+// Классы сообщений - AnalyzeGreenhouseRequest, GreenhouseAnalysisResponse
+// Серверный базовый класс GreenhouseAnalyticsGrpc.GreenhouseAnalyticsImplBase
+// Клиентские стабы GreenhouseAnalyticsGrpc.GreenhouseAnalyticsBlockingStub
+
+syntax = "proto3";
+
+// Java-пакет для сгенерированных классов
+option java_package = "edu.rutmiit.demo.grpc";
+
+// Все сгенерированные классы будут в отдельных файлах (не во вложенных классах)
+option java_multiple_files = true;
+
+// Пакет proto (для именования в других .proto файлах при импорте)
+package plantanalytics;
+
+// Сервисы
+// Unary RPC - один запрос это один ответ (типа аналог REST GET/POST)
+service GreenhouseAnalytics {
+
+    // Анализирует теплицу и возвращает вычисленные метрики
+    rpc AnalyzeGreenhouse (AnalyzeGreenhouseRequest) returns (GreenhouseAnalysisResponse);
+}
+
+// Сообщения
+// В proto3 все поля опциональны по умолчанию (zero-value = не задано).
+// Номера полей (1, 2, 3...) используются в бинарном формате —
+// они не должны меняться после релиза
+// чтобы не нарушить совместимость
+
+// Запрос на анализ теплицы — данные, необходимые для вычисления метрик.
+message AnalyzeGreenhouseRequest {
+    int64  greenhouse_id           = 1;  // ID теплицы в системе
+    string plant_name              = 2;  // Название растения
+    string variety                 = 3;  // Сорт растения
+    string status                  = 4;  // Текущий статус состояния почвы
+    int32  quantity                = 5;  // Количество растений
+    int32 days_since_last_watering = 6;  // Дней с последнего полива
+    int32 total_waterings          = 7;  // Общее количество поливов
+}
+
+// Ответ с результатами анализа — вычисленные метрики теплицы.
+message GreenhouseAnalysisResponse {
+    int64  greenhouse_id             = 1;  // ID книги (echo back)
+    string health_status             = 2;  // Статус состояния растения: HEALTHY, ATTENTION_NEEDED, CRITICAL
+    double health_score              = 3;  // Уровень здоровья растения
+    string watering_urgency          = 4;  // Срочность полива: NOT_NEEDED, SOON, URGENT, OVERDRY
+    int32  recommended_watering_days = 5;  // Рекомендуемый интервал полива (в днях)
+    string growth_stage              = 6;  // Уровень роста растения: SEEDLING, GROWING, FLOWERING, HARVEST
+}

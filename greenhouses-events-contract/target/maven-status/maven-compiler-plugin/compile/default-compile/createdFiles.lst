@@ -1,4 +1,5 @@
 edu\rutmiit\demo\events\GreenhouseEvent$Watered.class
+edu\rutmiit\demo\events\GreenhouseEvent$Analyzed.class
 edu\rutmiit\demo\events\RoutingKeys.class
 edu\rutmiit\demo\events\GreenhouseEvent$Created.class
 edu\rutmiit\demo\events\EventEnvelope.class
