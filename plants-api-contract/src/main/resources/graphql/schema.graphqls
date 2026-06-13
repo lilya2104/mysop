@@ -1,0 +1,112 @@
+# =============================================================================
+# GraphQL-контракт для Books API
+#
+# Эта схема описывает все доступные запросы (Query), мутации (Mutation) и типы.
+# По функциональности она полностью соответствует REST API: те же сущности,
+# те же операции (CRUD), те же фильтры и пагинация.
+#
+# Преимущество GraphQL — клиент сам выбирает, какие поля ему нужны.
+# =============================================================================
+
+# Пользовательские скалярные типы для работы с датой и временем.
+# DGS преобразует их в java.time.LocalDateTime и java.time.LocalDate.
+scalar DateTime
+scalar Date
+
+# ---------------------------------------------------------------------------
+# Основные типы данных
+# ---------------------------------------------------------------------------
+
+# Теплица - содержит информацию о теплице.
+type Greenhouse {
+    id: ID!
+    namePlant: String!
+    varietyPlant: String!
+    quantityPlant: Int!
+    status: WateredStatus!
+    lastWateredAt: Date!
+    createdAt: DateTime
+    updatedAt: DateTime
+}
+
+# WateredStatus - состояние почвы в теплице, enum
+enum WateredStatus {
+    WET
+    NORMAL
+    DRY
+}
+
+# ---------------------------------------------------------------------------
+# Типы для пагинации
+# ---------------------------------------------------------------------------
+
+# Постраничная коллекция теплиц.
+type GreenhouseConnection {
+    content: [Greenhouse!]!
+    pageInfo: PageInfo!
+    totalElements: Int!
+}
+
+# Метаданные страницы — номер, размер, общее число страниц.
+type PageInfo {
+    pageNumber: Int!
+    pageSize: Int!
+    totalPages: Int!
+    last: Boolean!
+}
+
+# ---------------------------------------------------------------------------
+# Входные типы для мутаций
+# ---------------------------------------------------------------------------
+
+# Создание новой теплицы. Все обязательные поля совпадают с REST GreenhouseRequest.
+input CreateGreenhouseInput {
+    namePlant: String!
+    varietyPlant: String!
+    quantityPlant: Int!
+    status: WateredStatus!
+    lastWateredAt: Date!
+}
+
+# Полное обновление теплицы.
+input UpdateGreenhouseInput {
+    namePlant: String
+    varietyPlant: String
+    quantityPlant: Int
+    status: WateredStatus
+    lastWateredAt: Date
+}
+
+# Фильтрация теплиц — аналог query-параметров в REST GET /api/greenhouses.
+input GreenhouseFilter {
+    searchPlantName: String
+}
+
+# ---------------------------------------------------------------------------
+# Корневые точки входа: запросы и мутации
+# ---------------------------------------------------------------------------
+
+type Query {
+    # Получить теплицу по идентификатору. Возвращает null если не найдена.
+    greenhouse(id: ID!): Greenhouse
+
+    # Список теплиц с фильтрацией и пагинацией.
+    greenhouses(filter: GreenhouseFilter, page: Int = 0, size: Int = 20): GreenhouseConnection!
+}
+
+type Mutation {
+    # Создать теплицу.
+    createGreenhouse(input: CreateGreenhouseInput!): Greenhouse!
+
+    # Полностью обновить теплицу.
+    updateGreenhouse(id: ID!, input: UpdateGreenhouseInput!): Greenhouse!
+
+    # Полить теплицу. Возвращает теплицу с обновленным временем последнего полива.
+    wateringGreenhouse(id: ID!): Greenhouse!
+
+    # Изменить статус состояния почвы. Возвращает теплицу с обновленным статусом.
+    changeWateredStatus(id: ID!, newStatus: WateredStatus!): Greenhouse!
+
+    # Удалить теплицу. Возвращает true при успехе.
+    deleteGreenhouse(id: ID!): Boolean!
+}
