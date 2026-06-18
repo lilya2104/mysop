@@ -41,8 +41,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex,
-                                                          HttpServletRequest req) {
+    public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest req) {
         List<ErrorResponse.FieldError> fieldErrors = ex.getBindingResult().getFieldErrors().stream()
                 .map(fe -> new ErrorResponse.FieldError(
                         fe.getField(),
@@ -50,12 +49,10 @@ public class GlobalExceptionHandler {
                         fe.getDefaultMessage()
                 ))
                 .toList();
-
         String detail = fieldErrors.stream()
                 .map(fe -> fe.field() + ": " + fe.message())
                 .reduce((a, b) -> a + "; " + b)
                 .orElse("Ошибка валидации входных данных");
-
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(

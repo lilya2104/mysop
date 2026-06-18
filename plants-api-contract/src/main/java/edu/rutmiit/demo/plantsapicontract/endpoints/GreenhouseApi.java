@@ -26,10 +26,7 @@ import org.springframework.web.bind.annotation.*;
  * Реализующий контроллер в сервисе должен имплементировать этот интерфейс.
  */
 @Tag(name = "Greenhouse", description = "Управление теплицами в саду")
-@RequestMapping(
-        value = "/api/greenhouse",
-        produces = MediaType.APPLICATION_JSON_VALUE
-)
+@RequestMapping(value = "/api/greenhouses", produces = MediaType.APPLICATION_JSON_VALUE)
 public interface GreenhouseApi {
     @Operation(
             summary = "Список теплиц",
@@ -55,23 +52,6 @@ public interface GreenhouseApi {
     @GetMapping("/{id}")
     EntityModel<GreenhouseResponse> getGreenhouseById(
             @Parameter(description = "ID теплицы", required = true, example = "1") @PathVariable Long id
-    );
-
-    @Operation(
-            summary = "Получить теплицу по названию растения",
-            security = @SecurityRequirement(name = GreenhousesApiContractConfig.SECURITY_SCHEME_BEARER)
-    )
-    @ApiResponse(responseCode = "200", description = "Теплица найден")
-    @ApiResponse(responseCode = "404", description = "Теплица не найдена",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    @GetMapping("/search")
-    PagedModel<EntityModel<GreenhouseResponse>> searchByPlantName(
-            @Parameter(description = "Название растений для поиска", required = true, example = "Томат черри")
-            @RequestParam String name,
-            @Parameter(description = "Номер страницы (0..N)", example = "0")
-            @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Размер страницы", example = "20")
-            @RequestParam(defaultValue = "20") int size
     );
 
     @Operation(
@@ -130,9 +110,10 @@ public interface GreenhouseApi {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     @ApiResponse(responseCode = "404", description = "Теплица не найдена",
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    @PatchMapping(value = "/{id}/water", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/{id}/watering")
     EntityModel<GreenhouseResponse> watering(
-            @Parameter(description = "ID теплицы", required = true, example = "1") @PathVariable Long id
+            @Parameter(description = "ID теплицы", required = true, example = "1")
+            @PathVariable Long id
     );
 
     @Operation(
@@ -147,7 +128,8 @@ public interface GreenhouseApi {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     @PatchMapping(value = "/{id}/status", consumes = MediaType.APPLICATION_JSON_VALUE)
     EntityModel<GreenhouseResponse> changeWateredStatus(
-            @Parameter(description = "ID теплицы", required = true, example = "1") @PathVariable Long id,
+            @Parameter(description = "ID теплицы", required = true, example = "1")
+            @PathVariable Long id,
             @Valid@RequestBody WateredStatus newStatus
     );
 

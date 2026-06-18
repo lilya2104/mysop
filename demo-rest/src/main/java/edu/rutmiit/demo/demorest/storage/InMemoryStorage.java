@@ -13,8 +13,11 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 public class InMemoryStorage {
+    // хранение теплиц
     public final Map<Long, GreenhouseResponse> greenhouses = new ConcurrentHashMap<>();
+    // хранение счетчиков полива теплиц
     public final Map<Long, Integer> wateringCounters = new ConcurrentHashMap<>();
+    // генератор уникальных идентификаторов (id)
     public final AtomicLong greenhouseSequence = new AtomicLong(0);
 
     @PostConstruct

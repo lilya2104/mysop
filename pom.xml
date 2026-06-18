@@ -9,16 +9,17 @@
         .\mvnw install -DskipTests
 
         # Запустить demo-rest (REST + GraphQL + event publisher)
-        .\mvnw spring-boot:run -pl demo-rest -am
+        .\mvnw spring-boot:run -pl demo-rest -DskipTests
+        http://localhost:8080/swagger-ui.html
 
         # Запустить audit-service (RabbitMQ consumer)
-        .\mvnw spring-boot:run -pl audit-service -am
+        .\mvnw spring-boot:run -pl audit-service -DskipTests
 
         # Запустить gRPC Analytics Server (порт gRPC: 9090, HTTP: 8083)
-        .\mvnw spring-boot:run -pl grpc-analytics-server -am
+        .\mvnw spring-boot:run -pl grpc-analytics-server -DskipTests
 
         # Запустить gRPC Enrichment Client (RabbitMQ → gRPC → RabbitMQ, HTTP: 8082)
-        .\mvnw spring-boot:run -pl grpc-enrichment-client -am
+        .\mvnw spring-boot:run -pl grpc-enrichment-client -DskipTests
 
         # Запустить сервис уведомлений
         .\mvnw spring-boot:run -pl notification-service -DskipTests

@@ -29,27 +29,18 @@ public class GreenhouseResponse extends RepresentationModel<GreenhouseResponse> 
 
     @Schema(description = "Уникальный идентификатор теплицы", example = "1")
     private final Long id;
-
     @Schema(description = "Название растения", example = "Томаты")
     private final String namePlant;
-
     @Schema(description = "Сорт растения", example = "Черри")
     private final String varietyPlant;
-
     @Schema(description = "Количество растений", example = "50")
     private final Integer quantityPlant;
-
     @Schema(description = "Статус состояния почвы")
     private final WateredStatus status;
-
     @Schema(description = "Момент последнего полива теплицы")
     private final LocalDate lastWateredAt;
-
     @Schema(description = "Момент создания записи в каталоге")
     private final OffsetDateTime createdAt;
-
     @Schema(description = "Момент последнего обновления записи")
     private final OffsetDateTime updatedAt;
-
 }
-

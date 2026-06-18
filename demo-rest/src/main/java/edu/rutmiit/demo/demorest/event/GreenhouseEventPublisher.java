@@ -68,9 +68,7 @@ public class GreenhouseEventPublisher {
         send(RoutingKeys.GREENHOUSE_UPDATED, event);
     }
 
-    /**
-     * Публикует событие «теплица полита».
-     */
+    // Публикует событие «теплица полита».
     public void publishWatered(GreenhouseResponse greenhouse, Integer totalWaterings) {
         var event = new GreenhouseEvent.Watered(
                 greenhouse.getId(),
@@ -82,9 +80,7 @@ public class GreenhouseEventPublisher {
         send(RoutingKeys.GREENHOUSE_WATERED, event);
     }
 
-    /**
-     * Публикует событие «изменён статус полива».
-     */
+    // Публикует событие «изменён статус полива».
     public void publishStatusChanged(GreenhouseResponse greenhouse, WateredStatus oldStatus) {
         var event = new GreenhouseEvent.StatusChanged(
                 greenhouse.getId(),

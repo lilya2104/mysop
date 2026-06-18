@@ -46,24 +46,24 @@ public class EventNotificationListener {
             byte[] body = message.getBody();
             JsonNode root = jsonMapper.readTree(body);
 
-            // Парсим метаданные
+            // 1. Парсим метаданные
             JsonNode metaNode = root.get("metadata");
             EventMetadata metadata = jsonMapper.treeToValue(metaNode, EventMetadata.class);
 
-            // Дедупликация по eventId 
+            // 2. Дедупликация по eventId
             if (!processedEventIds.add(metadata.eventId())) {
                 log.warn("Дубликат уведомления пропущен: eventId={}", metadata.eventId());
                 return;
             }
 
-            // Формируем уведомление
+            // 2. Формируем уведомление
             JsonNode payloadNode = root.get("payload");
             String title = buildTitle(metadata.eventType());
             String description = buildDescription(metadata.eventType(), payloadNode);
             String icon = resolveIcon(metadata.eventType());
             String level = resolveLevel(metadata.eventType());
 
-            // JSON для WebSocket-клиента 
+            // 4. Сериализуем в JSON для WebSocket-клиента
             String notificationJson = jsonMapper.writeValueAsString(
                     new NotificationPayload(
                             "NOTIFICATION",
@@ -79,7 +79,7 @@ public class EventNotificationListener {
                     )
             );
 
-            // Broadcast в WebSocket
+            // 5. Broadcast в WebSocket
             webSocketHandler.broadcast(notificationJson);
 
             log.info("[NOTIFY] {} | {} (клиентов: {})",
@@ -92,7 +92,6 @@ public class EventNotificationListener {
     }
 
     // Формирование заголовка уведомления
-
     private String buildTitle(String eventType) {
         return switch (eventType) {
             case "greenhouse.created"             -> "Новая теплица";
@@ -104,9 +103,7 @@ public class EventNotificationListener {
             default                               -> "Событие: " + eventType;
         };
     }
-
     // Формирование описания
-
     private String buildDescription(String eventType, JsonNode payload) {
         try {
             return switch (eventType) {
@@ -147,7 +144,6 @@ public class EventNotificationListener {
     }
 
     // Иконка по типу события
-
     private String resolveIcon(String eventType) {
         return switch (eventType) {
             case "greenhouse.created"   -> "greenhouse-plus";
@@ -160,7 +156,6 @@ public class EventNotificationListener {
     }
 
     // Уровень уведомления
-
     private String resolveLevel(String eventType) {
         return switch (eventType) {
             case "greenhouse.deleted" -> "warning";
@@ -169,9 +164,7 @@ public class EventNotificationListener {
         };
     }
 
-    /**
-     * Payload уведомления для WebSocket.
-     */
+    // Payload уведомления для WebSocket.
     record NotificationPayload(
             String type,
             String eventId,

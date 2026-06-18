@@ -20,7 +20,7 @@ public final class RoutingKeys {
     // Имя общего topic exchange для доменных событий
     public static final String EXCHANGE = "greenhouse.events";
 
-    // Routing keys для событий книг
+    // Routing keys для событий теплиц
     public static final String GREENHOUSE_CREATED = "greenhouse.created";
     public static final String GREENHOUSE_UPDATED = "greenhouse.updated";
     public static final String GREENHOUSE_WATERED = "greenhouse.watered";

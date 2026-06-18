@@ -43,18 +43,15 @@ public class GreenhouseAnalyticsServiceImpl extends GreenhouseAnalyticsGrpc.Gree
     @Override
     public void analyzeGreenhouse(AnalyzeGreenhouseRequest request,
                             StreamObserver<GreenhouseAnalysisResponse> responseObserver) {
-
         log.info("gRPC запрос: анализ теплицы id={}, растение={}, статус={}, дней без полива={}",
                 request.getGreenhouseId(), request.getPlantName(),
                 request.getStatus(), request.getDaysSinceLastWatering());
-
         // ─── Вычисление метрик ───────────────────────────────────────
         String healthStatus = calculateHealthStatus(request.getStatus(), request.getDaysSinceLastWatering());
         double healthScore = calculateHealthScore(request.getStatus(), request.getDaysSinceLastWatering());
         String wateringUrgency = calculateWateringUrgency(request.getStatus(), request.getDaysSinceLastWatering());
         int recommendedDays = getRecommendedWateringInterval(request.getPlantName());
         String growthStage = determineGrowthStage(request.getDaysSinceLastWatering(), request.getTotalWaterings());
-
         // ─── Формируем ответ ─────────────────────────────────────────
         GreenhouseAnalysisResponse response = GreenhouseAnalysisResponse.newBuilder()
                 .setGreenhouseId(request.getGreenhouseId())
@@ -64,10 +61,8 @@ public class GreenhouseAnalyticsServiceImpl extends GreenhouseAnalyticsGrpc.Gree
                 .setRecommendedWateringDays(recommendedDays)
                 .setGrowthStage(growthStage)
                 .build();
-
         log.info("gRPC ответ: теплица id={}, здоровье={}, срочность={}, рекомендуемый интервал={}дн",
                 response.getGreenhouseId(), healthStatus, wateringUrgency, recommendedDays);
-
         // Отправляем ответ клиенту и завершаем RPC
         responseObserver.onNext(response);
         responseObserver.onCompleted();
@@ -122,10 +117,12 @@ public class GreenhouseAnalyticsServiceImpl extends GreenhouseAnalyticsGrpc.Gree
         if (plantName == null) return 0;
 
         String lowerName = plantName.toLowerCase();
-        if (lowerName.contains("томат") || lowerName.contains("помидор") || lowerName.contains("перец")) return 3;
+        if (lowerName.contains("томат") || lowerName.contains("помидор") || lowerName.contains("перец"))
+            return 3;
         if (lowerName.contains("огурец")) return 1;
-        if (lowerName.contains("клубника") || lowerName.contains("земляника") || lowerName.contains("капуста")) return 2;
-        return 4; // по умолчанию раз в 5 дней
+        if (lowerName.contains("клубника") || lowerName.contains("земляника") || lowerName.contains("капуста"))
+            return 2;
+        return 4;
     }
 
     /**

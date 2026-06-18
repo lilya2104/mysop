@@ -15,24 +15,18 @@ import java.time.LocalDateTime;
  */
 @Schema(description = "Частичное обновление теплицы (PATCH). Передайте только те поля, которые нужно изменить.")
 public record PatchGreenhouseRequest(
-
         @Schema(description = "Название растения", example = "Томаты")
         @Size(max = 100, message = "Название растения не может превышать 100 символов")
         String namePlant,
-
         @Schema(description = "Сорт растения", example = "Черри")
         @Size(max = 100, message = "Сорт растения не может превышать 100 символов")
         String varietyPlant,
-
         @Schema(description = "Количество растений", example = "10")
         @Min(value = 1, message = "Количество растений не может быть меньше 1")
         @Max(value = 200, message = "Количество растений должно быть не больше 200")
         Integer quantityPlant,
-
-        @Schema(description = "Статус состояния почвы", example = "WET", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "Статус состояния почвы", example = "WET")
         WateredStatus status,
-
-        @Schema(description = "Момент последнего полива теплицы", example = "2000-01-01T13:01:00", requiredMode = Schema.RequiredMode.REQUIRED)
+        @Schema(description = "Момент последнего полива теплицы", example = "2000-01-01T13:01:00")
         LocalDate lastWateredAt
-
 ) {}

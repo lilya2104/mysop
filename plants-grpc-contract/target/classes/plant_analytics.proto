@@ -20,7 +20,6 @@ package plantanalytics;
 // Сервисы
 // Unary RPC - один запрос это один ответ (типа аналог REST GET/POST)
 service GreenhouseAnalytics {
-
     // Анализирует теплицу и возвращает вычисленные метрики
     rpc AnalyzeGreenhouse (AnalyzeGreenhouseRequest) returns (GreenhouseAnalysisResponse);
 }

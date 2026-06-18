@@ -48,17 +48,14 @@ public class AuditEventListener {
         try {
             byte[] body = message.getBody();
             JsonNode root = jsonMapper.readTree(body);
-
             // Извлекаем метаданные из JSON-конверта
             JsonNode metaNode = root.get("metadata");
             EventMetadata metadata = jsonMapper.treeToValue(metaNode, EventMetadata.class);
-
             // Дедупликация — если событие уже обработано, пропускаем
             if (auditStorage.isDuplicate(metadata.eventId())) {
                 log.warn("Дубликат события пропущен: eventId={}", metadata.eventId());
                 return;
             }
-
             // Определяем тип события и формируем описание
             JsonNode payloadNode = root.get("payload");
             String description = buildDescription(metadata.eventType(), payloadNode);
@@ -72,9 +69,7 @@ public class AuditEventListener {
                     Instant.now(),
                     description
             ));
-
             log.info("[AUDIT #{}] {} | {}", entry.sequenceNumber(), metadata.eventType(), description);
-
         } catch (Exception e) {
             log.error("Ошибка обработки события: {}", e.getMessage(), e);
             // Исключение пробросится, сообщение уйдёт в DLQ после исчерпания retries
@@ -88,24 +83,26 @@ public class AuditEventListener {
      * Десериализует payload в конкретный тип на основе eventType,
      * затем формирует описание через pattern matching по sealed interface.
      */
-    private String buildDescription(String eventType, JsonNode payloadNode) throws Exception {
+    private String buildDescription(String eventType, JsonNode payloadNode) {
         return switch (eventType) {
             case "greenhouse.created" -> {
-                GreenhouseEvent.Created e = jsonMapper.treeToValue(payloadNode, GreenhouseEvent.Created.class);
+                GreenhouseEvent.Created e = jsonMapper.treeToValue(payloadNode,
+                        GreenhouseEvent.Created.class);
                 yield String.format("Создана теплица с растением: %s в количестве %d",
                         e.namePlant(), e.quantityPlant());
             }
             case "greenhouse.updated" -> {
-                GreenhouseEvent.Updated e = jsonMapper.treeToValue(payloadNode, GreenhouseEvent.Updated.class);
+                GreenhouseEvent.Updated e = jsonMapper.treeToValue(payloadNode,
+                        GreenhouseEvent.Updated.class);
                 yield String.format("Обновлена теплица id=%d с растением %s",
                         e.greenhouseId(), e.namePlant());
             }
-            case "greenhouse.deleted" -> {
+            case "greenhouse.deleted" -> { //...
                 GreenhouseEvent.Deleted e = jsonMapper.treeToValue(payloadNode, GreenhouseEvent.Deleted.class);
                 yield String.format("Удалена теплица id=%d с растением %s",
                         e.greenhouseId(), e.namePlant());
             }
-            case "greenhouse.watered" -> {
+            case "greenhouse.watered" -> { //...
                 GreenhouseEvent.Watered e = jsonMapper.treeToValue(payloadNode, GreenhouseEvent.Watered.class);
                 yield String.format("Полита теплица id=%d с растением %s",
                         e.greenhouseId(), e.namePlant());

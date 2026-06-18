@@ -21,7 +21,6 @@ public class EnrichmentEventPublisher {
 
     private static final Logger log = LoggerFactory.getLogger(EnrichmentEventPublisher.class);
     private static final String SOURCE = "grpc-enrichment-client";
-
     private final RabbitTemplate rabbitTemplate;
 
     public EnrichmentEventPublisher(RabbitTemplate rabbitTemplate) {

@@ -48,20 +48,6 @@ public class GreenhouseService {
                 .orElseThrow(() -> new ResourceNotFoundException("Greenhouse", id));
     }
 
-    public PagedResponse<GreenhouseResponse> searchByPlantName(String query, int page, int size) {
-        List<GreenhouseResponse> allByName = storage.greenhouses.values().stream()
-                .filter(authorResponse -> authorResponse.getNamePlant() != null &&
-                        authorResponse.getNamePlant().toLowerCase().contains(query.toLowerCase()))
-                .sorted(Comparator.comparingLong(GreenhouseResponse::getId))
-                .toList();
-        int totalElements = allByName.size();
-        int totalPages = size > 0 ? (int) Math.ceil((double) totalElements / size) : 1;
-        int from = page * size;
-        int to = Math.min(from + size, totalElements);
-        List<GreenhouseResponse> content = (from >= totalElements) ? List.of() : allByName.subList(from, to);
-        return new PagedResponse<>(content, page, size, totalElements, totalPages, page >= totalPages - 1);
-    }
-
     public GreenhouseResponse create(GreenhouseRequest request) {
         long id = storage.greenhouseSequence.incrementAndGet();
         storage.wateringCounters.put(id, 0);
@@ -78,8 +64,8 @@ public class GreenhouseService {
         return ghouse;
     }
 
-    public GreenhouseResponse update(Long id, GreenhouseRequest request) {
-        GreenhouseResponse updatedGreenhouse = GreenhouseResponse.builder()
+    public GreenhouseResponse updateGreenhouse(Long id, GreenhouseRequest request) {
+        GreenhouseResponse updated = GreenhouseResponse.builder()
                 .id(id)
                 .namePlant(request.namePlant())
                 .varietyPlant(request.varietyPlant())
@@ -87,9 +73,9 @@ public class GreenhouseService {
                 .status(request.status())
                 .lastWateredAt(request.lastWateredAt())
                 .build();
-        storage.greenhouses.put(id, updatedGreenhouse);
-        eventPublisher.publishUpdated(updatedGreenhouse);
-        return updatedGreenhouse;
+        storage.greenhouses.put(id, updated);
+        eventPublisher.publishUpdated(updated);
+        return updated;
     }
 
     public GreenhouseResponse patchGreenhouse(Long id, PatchGreenhouseRequest request) {
@@ -126,7 +112,6 @@ public class GreenhouseService {
     public GreenhouseResponse changeWateredStatus(Long id, WateredStatus newStatus) {
         GreenhouseResponse existing = findById(id);
         WateredStatus oldStatus = existing.getStatus();
-
         GreenhouseResponse updated = GreenhouseResponse.builder()
                 .id(id)
                 .namePlant(existing.getNamePlant())

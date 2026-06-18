@@ -17,17 +17,17 @@ public record EventMetadata(
 
         // Уникальный идентификатор события (UUID v4).
         // Позволяет обнаружить повторную доставку и реализовать idempotent consumer.
-        String eventId,
+        String eventId, // уникальный идентификатор события
 
         // Момент создания события в формате ISO-8601 (UTC).
-        Instant timestamp,
+        Instant timestamp, // момент создания события
 
         // Источник события — имя сервиса, который его породил.
-        String source,
+        String source, // имя сервиса-отправителя
 
         // Тип события: "greenhouse.created", "greenhouse.deleted" и т.д.
         // Совпадает с routing key в RabbitMQ — удобно для логирования.
-        String eventType
+        String eventType // тип события, совпадает с routing key
 ) {
     /**
      * Фабричный метод для создания метаданных на стороне publisher'а.

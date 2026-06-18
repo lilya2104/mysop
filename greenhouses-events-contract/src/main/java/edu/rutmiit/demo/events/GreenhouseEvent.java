@@ -11,77 +11,20 @@ import java.time.LocalDate;
  * Десериализация по eventType, а не через Jackson-аннотации.
  */
 public sealed interface GreenhouseEvent {
-
-    /**
-     * Теплица создана. Содержит основные атрибуты новой теплицы.
-     */
-    record Created(
-            Long greenhouseId,
-            String namePlant,
-            String varietyPlant,
-            Integer quantityPlant,
-            WateredStatus status,
-            LocalDate lastWatered,
-            Integer totalWaterings
+    record Created(Long greenhouseId, String namePlant, String varietyPlant, Integer quantityPlant,
+                   WateredStatus status, LocalDate lastWatered, Integer totalWaterings
     ) implements GreenhouseEvent {}
-
-    /**
-     * Теплица обновлена. Содержит актуальное состояние после обновления.
-     * В промышленных системах здесь могут быть и старые значения (before/after),
-     * но для демонстрации достаточно нового состояния.
-     */
-    record Updated(
-            Long greenhouseId,
-            String namePlant,
-            String varietyPlant,
-            Integer quantityPlant,
-            WateredStatus status,
-            LocalDate lastWatered
+    record Updated(Long greenhouseId, String namePlant, String varietyPlant,
+                   Integer quantityPlant, WateredStatus status, LocalDate lastWatered
     ) implements GreenhouseEvent {}
-
-    /**
-     * Теплица полита (изменение статуса на WET и обновление даты полива).
-     */
-    record Watered(
-            Long greenhouseId,
-            String namePlant,
-            WateredStatus newStatus,
-            LocalDate wateredAt,
-            Integer totalWaterings
+    record Watered(Long greenhouseId, String namePlant, WateredStatus newStatus,
+                   LocalDate wateredAt, Integer totalWaterings
     ) implements GreenhouseEvent {}
-
-    /**
-     * Изменён статус полива (например, с WET на DRY или наоборот).
-     * Вызывается из метода changeWateredStatus() в GreenhouseService.
-     */
-    record StatusChanged(
-            Long greenhouseId,
-            String namePlant,
-            WateredStatus oldStatus,
-            WateredStatus newStatus,
-            LocalDate changedAt
+    record StatusChanged(Long greenhouseId, String namePlant, WateredStatus oldStatus,
+                         WateredStatus newStatus, LocalDate changedAt
     ) implements GreenhouseEvent {}
-
-    /**
-     * Теплица обогащена аналитикой — результат gRPC-вызова к analytics-серверу.
-     *
-     * Событие публикуется grpc-enrichment-client после получения ответа
-     * от grpc-analytics-server. Содержит вычисленные метрики теплицы.
-     */
-    record Analyzed(
-            Long greenhouseId,
-            String healthStatus,
-            Double healthScore,
-            String wateringUrgency,
-            Integer recommendedWateringDays,
-            String growthStage
+    record Analyzed(Long greenhouseId, String healthStatus, Double healthScore,
+                    String wateringUrgency, Integer recommendedWateringDays, String growthStage
     ) implements GreenhouseEvent {}
-
-    /**
-     * Теплица удалена.
-     */
-    record Deleted(
-            Long greenhouseId,
-            String namePlant
-    ) implements GreenhouseEvent {}
+    record Deleted(Long greenhouseId, String namePlant) implements GreenhouseEvent {}
 }

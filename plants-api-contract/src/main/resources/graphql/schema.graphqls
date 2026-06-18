@@ -17,6 +17,7 @@ scalar Date
 # Основные типы данных
 # ---------------------------------------------------------------------------
 
+# Объектный тип описывает сущность с набором полей.
 # Теплица - содержит информацию о теплице.
 type Greenhouse {
     id: ID!
@@ -28,8 +29,7 @@ type Greenhouse {
     createdAt: DateTime
     updatedAt: DateTime
 }
-
-# WateredStatus - состояние почвы в теплице, enum
+# WateredStatus - Enum описывает возможные состояния почвы в теплице.
 enum WateredStatus {
     WET
     NORMAL
@@ -41,13 +41,16 @@ enum WateredStatus {
 # ---------------------------------------------------------------------------
 
 # Постраничная коллекция теплиц.
+
+# Обёртка для постраничного ответа.
+# Содержит список теплиц, метаданные страницы и общее количество элементов.
 type GreenhouseConnection {
     content: [Greenhouse!]!
     pageInfo: PageInfo!
     totalElements: Int!
 }
-
 # Метаданные страницы — номер, размер, общее число страниц.
+# Такая модель полностью соответствует PagedResponse<T> из REST-контракта.
 type PageInfo {
     pageNumber: Int!
     pageSize: Int!
@@ -59,26 +62,21 @@ type PageInfo {
 # Входные типы для мутаций
 # ---------------------------------------------------------------------------
 
-# Создание новой теплицы. Все обязательные поля совпадают с REST GreenhouseRequest.
-input CreateGreenhouseInput {
+input CreateGreenhouseInput {# Создание новой теплицы. Все обязательные поля совпадают с GreenhouseRequest.
     namePlant: String!
     varietyPlant: String!
     quantityPlant: Int!
     status: WateredStatus!
     lastWateredAt: Date!
 }
-
-# Полное обновление теплицы.
-input UpdateGreenhouseInput {
+input UpdateGreenhouseInput { # Полное обновление теплицы.
     namePlant: String
     varietyPlant: String
     quantityPlant: Int
     status: WateredStatus
     lastWateredAt: Date
 }
-
-# Фильтрация теплиц — аналог query-параметров в REST GET /api/greenhouses.
-input GreenhouseFilter {
+input GreenhouseFilter { # Фильтрация теплиц — аналог query-параметров в REST GET /api/greenhouses.
     searchPlantName: String
 }
 
@@ -89,24 +87,18 @@ input GreenhouseFilter {
 type Query {
     # Получить теплицу по идентификатору. Возвращает null если не найдена.
     greenhouse(id: ID!): Greenhouse
-
     # Список теплиц с фильтрацией и пагинацией.
     greenhouses(filter: GreenhouseFilter, page: Int = 0, size: Int = 20): GreenhouseConnection!
 }
-
 type Mutation {
     # Создать теплицу.
     createGreenhouse(input: CreateGreenhouseInput!): Greenhouse!
-
     # Полностью обновить теплицу.
     updateGreenhouse(id: ID!, input: UpdateGreenhouseInput!): Greenhouse!
-
     # Полить теплицу. Возвращает теплицу с обновленным временем последнего полива.
     wateringGreenhouse(id: ID!): Greenhouse!
-
     # Изменить статус состояния почвы. Возвращает теплицу с обновленным статусом.
     changeWateredStatus(id: ID!, newStatus: WateredStatus!): Greenhouse!
-
     # Удалить теплицу. Возвращает true при успехе.
     deleteGreenhouse(id: ID!): Boolean!
 }
